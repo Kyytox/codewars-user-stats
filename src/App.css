@@ -1,41 +1,94 @@
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
+  /* max-width: 1280px; */
+  margin: 0;
   padding: 2rem;
   text-align: center;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+
+
+.main-home {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.header {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin-top: 2%;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+.header img {
+  width: 80px;
+  height: 80px;
 }
 
-.card {
-  padding: 2em;
+
+
+
+
+.text-field-username {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin-top: 50px;
 }
 
-.read-the-docs {
-  color: #888;
+.text-field-username form {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 50%;
+}
+
+
+.text-field-username>form>div {
+  width: 35%;
+  margin-right: 5px;
+}
+
+.text-field-username input {
+  width: 100%;
+  height: 10px;
+  background-color: white;
+  border-radius: 5px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  -ms-border-radius: 5px;
+  -o-border-radius: 5px;
+}
+
+.text-field-username input:focus {
+  background-color: #16171b;
+  color: white;
+  outline-color: white;
+}
+
+.text-field-username input:focus fieldset {
+  outline-color: white;
+}
+
+
+.text-field-username label {
+  top: -6px;
+}
+
+
+.text-field-username label.Mui-focused {
+  color: rgb(124, 124, 124);
+  top: 0px;
+}
+
+
+.text-field-username button {
+  color: white;
+}
+
+.text-field-username button svg {
+  font-size: 1.9rem;
 }
