@@ -171,3 +171,63 @@
 }
 
 .div-pie-chart-overall-rank {}
+
+
+
+
+.div-progress-bar {
+  border: 1px solid red;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  width: 100%;
+  padding: 20px;
+}
+
+
+.box-progress-bar p {
+  text-align: left;
+  margin-bottom: 4px;
+}
+
+.progress {
+  background: rgba(0, 0, 0, 0.432);
+  justify-content: flex-start;
+  border-radius: 100px;
+  align-items: center;
+  position: relative;
+  display: flex;
+  height: 8px;
+  width: 70%;
+  margin-bottom: 20px;
+}
+
+.progress-value {
+  text-align: right;
+  border-radius: 100px;
+  height: 100%;
+  animation: load 3s normal forwards;
+  -webkit-animation: load 3s normal forwards;
+}
+
+.label-progress {
+  font-size: 13px;
+  padding: 5px;
+  color: white;
+  font-weight: bold;
+  margin-top: 3px;
+  margin-left: -26px;
+  position: absolute;
+}
+
+
+@keyframes load {
+
+  0% {
+    width: 0;
+  }
+
+  100% {
+    width: width;
+  }
+}
