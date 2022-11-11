@@ -9,14 +9,14 @@ const ProgressBar = (props) => {
     };
 
     return (
-        <div className="box-progress-bar">
+        <>
             <p>{language}</p>
             <div className="progress">
                 <div className="progress-value" style={fillerStyles}>
                     <span className="label-progress">{`${completed}%`}</span>
                 </div>
             </div>
-        </div>
+        </>
     );
 };
 

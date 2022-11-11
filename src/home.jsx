@@ -22,7 +22,7 @@ function Home(props) {
     const submitFormUsername = async () => {
         // remove all
         localStorage.clear();
-        console.log("username", username);
+        // console.log("username", username);
         var cptPageChal = 0;
         var arrData = [];
         var nbPages = 0;
@@ -38,7 +38,7 @@ function Home(props) {
                 },
             });
             // insert in LocalStorage infos user colect with API
-            console.log("res:", res.data);
+            // console.log("res:", res.data);
             localStorage.setItem(
                 "dataUser",
                 JSON.stringify({
@@ -71,21 +71,25 @@ function Home(props) {
                         Accept: "application/json",
                     },
                 });
-                console.log("res:", res.data);
+                // console.log("res:", res.data);
+
                 // insert values in array for push in LocalStorage
-                arrData.push(res.data.data);
+                arrData = arrData.concat(res.data.data);
                 nbPages = res.data.totalPages;
+
+                // break we have enough data for next page
+                if (x === 6) {
+                    break;
+                }
             } catch (err) {
                 console.log(err);
             }
         }
 
-        arrData = arrData[0];
-
         // Regroup challanges completed by date (day)
         const arrGroupByDate = arrData.reduce((group, elem) => {
             const completedAt = elem.completedAt.split("T")[0];
-            console.log(completedAt);
+            // console.log(completedAt);
 
             group[completedAt] = group[completedAt] ?? [];
             group[completedAt].push(elem);
@@ -126,7 +130,7 @@ function Home(props) {
             ) : (
                 <div className="text-field-username">
                     <form noValidate autoComplete="off" onSubmit={submitFormUsername}>
-                        <TextField required id="outlined-required" label="Enter Username" defaultValue="Kytox" onChange={userNameChange} />
+                        <TextField required id="outlined-required" label="Enter Username" defaultValue="uttumutt" onChange={userNameChange} />
                         <IconButton type="submit" sx={{ p: "5px" }} aria-label="search">
                             <SearchIcon />
                         </IconButton>

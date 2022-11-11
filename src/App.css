@@ -105,22 +105,19 @@
 .main-stats {
   display: flex;
   flex-direction: column;
+  flex-wrap: nowrap;
+  align-items: center;
   margin: 0 10%;
 }
 
-.box-1 {
-  display: flex;
-  flex-direction: row;
-  align-items: stretch;
-  justify-content: space-between;
-}
 
 .div-user {
   background-color: #303133;
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
-  width: 30%;
+  width: 80%;
+  margin-bottom: 20px;
   padding: 5px;
   border-radius: 5px;
   -webkit-border-radius: 5px;
@@ -132,16 +129,20 @@
 .infos-user {
   width: 100%;
   padding: 10px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: space-evenly;
 }
 
 .name-rank {
-  width: 100%;
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
   align-items: flex-start;
   justify-content: center;
-  margin-top: 15px;
+  margin-top: 6px;
 }
 
 .name-rank h2 {
@@ -162,32 +163,44 @@
   object-position: 0% 50%;
 }
 
+
+
+/* DIV CHARTS */
+
 .div-charts {
   background-color: #303133;
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
-  width: 67%;
+  width: 100%;
+  margin-bottom: 20px;
+  padding: 15px;
+  justify-content: space-between;
+  border-radius: 5px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  -ms-border-radius: 5px;
+  -o-border-radius: 5px;
 }
-
-.div-pie-chart-overall-rank {}
-
 
 
 
 .div-progress-bar {
-  border: 1px solid red;
   display: flex;
-  flex-direction: column;
-  flex-wrap: nowrap;
-  width: 100%;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  width: 60%;
   padding: 20px;
 }
 
+.box-progress-bar {
+  width: 30%;
+}
 
 .box-progress-bar p {
   text-align: left;
-  margin-bottom: 4px;
+  margin: 6px;
 }
 
 .progress {
@@ -198,7 +211,6 @@
   position: relative;
   display: flex;
   height: 8px;
-  width: 70%;
   margin-bottom: 20px;
 }
 
@@ -211,7 +223,7 @@
 }
 
 .label-progress {
-  font-size: 13px;
+  font-size: 11px;
   padding: 5px;
   color: white;
   font-weight: bold;
@@ -230,4 +242,35 @@
   100% {
     width: width;
   }
+}
+
+.div-kata-by-lang {
+  width: 20%;
+}
+
+
+
+
+
+
+/* DIV HEAT MAP */
+
+.div-heat-map {
+  background-color: #303133;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  width: 100%;
+  padding: 15px;
+  border-radius: 5px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  -ms-border-radius: 5px;
+  -o-border-radius: 5px;
+}
+
+
+.div-heat-map svg {
+  width: 50%;
+  max-height: 250px;
 }
