@@ -236,7 +236,7 @@ function UserStats() {
                     />
                     <ReactTooltip />
                 </div>
-                <div className="box-btn-kata">
+                {/* <div className="box-btn-kata">
                     <h3>More details</h3>
                     <Button variant="outlined" size="large">
                         Completed Kata
@@ -244,7 +244,7 @@ function UserStats() {
                     <Button variant="outlined" size="large">
                         Authored Kata
                     </Button>
-                </div>
+                </div> */}
             </div>
         </div>
     );
