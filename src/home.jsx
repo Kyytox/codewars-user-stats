@@ -79,12 +79,28 @@ function Home(props) {
 
                 // break we have enough data for next page
                 if (x === 6) {
-                    break;
+                    // break;
                 }
             } catch (err) {
                 console.log(err);
             }
         }
+
+        // Regroup Kata by Languages
+        console.log("arrData", arrData);
+        const arrKataByLang = arrData.reduce((group, elem) => {
+            const completedLang = elem.completedLanguages;
+            console.log(completedLang);
+
+            for (var x of completedLang) {
+                console.log("x", x);
+                group[x] = group[x] ?? [];
+                group[x].push(elem.id);
+            }
+
+            return group;
+        }, {});
+        console.log("arrKataByLang", arrKataByLang);
 
         // Regroup challanges completed by date (day)
         const arrGroupByDate = arrData.reduce((group, elem) => {
@@ -104,6 +120,7 @@ function Home(props) {
                     totalPages: nbPages,
                     data: arrData,
                     regroupDate: arrGroupByDate,
+                    KataByLang: arrKataByLang,
                 })
             );
         }
@@ -130,7 +147,7 @@ function Home(props) {
             ) : (
                 <div className="text-field-username">
                     <form noValidate autoComplete="off" onSubmit={submitFormUsername}>
-                        <TextField required id="outlined-required" label="Enter Username" defaultValue="uttumutt" onChange={userNameChange} />
+                        <TextField required id="outlined-required" label="Enter Username" defaultValue="Kytox" onChange={userNameChange} />
                         <IconButton type="submit" sx={{ p: "5px" }} aria-label="search">
                             <SearchIcon />
                         </IconButton>
