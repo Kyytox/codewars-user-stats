@@ -1,85 +1,29 @@
-import { React, useState } from "react";
-
-import CalendarHeatmap from "react-calendar-heatmap";
-import ReactTooltip from "react-tooltip";
+import { React, useState, useEffect } from "react";
 import { PieChart, Pie, BarChart, Bar, XAxis, YAxis } from "recharts";
 import ProgressBar from "./progressBar";
-import Button from "@mui/material/Button";
-
+import axios from "axios";
+import CircularProgress from "@mui/material/CircularProgress";
+import HeatMap from "./heatMap";
+import InfosUser from "./infosUser";
 import "./App.css";
-import "./react-calendar-heatmap.css";
-
-function shiftDate(date, numDays) {
-    const newDate = new Date(date);
-    newDate.setDate(newDate.getDate() + numDays);
-    return newDate;
-}
 
 function UserStats() {
-    const dataUser = JSON.parse(localStorage.getItem("dataUser")) || false;
-    const urlBadgeUserUser = "https://www.codewars.com/users/" + dataUser.user + "/badges/large";
+    const [topCallApi, setTopCallApi] = useState(false);
+    const [userClan, setUserClan] = useState("");
+    const [userPosition, setUserPosition] = useState("");
+    const [userHonor, setUserHonor] = useState("");
+    const [userCompletKata, setUserCompletKata] = useState("");
+    const [rankOverall, setRankOverall] = useState("");
+    const [listRankLang, setListRankLang] = useState([]);
 
-    const listCompletKata = JSON.parse(localStorage.getItem("completedChallenges")) || false;
-    const dataHeatMap = [];
-    // console.log("listCompletKata", listCompletKata.regroupDate);
+    // arr for number of kata completed by language
+    const [regroupDate, setRegroupDate] = useState([]);
 
-    const arrKataByLang = listCompletKata.KataByLang;
-    console.log("arrKataByLang", arrKataByLang);
+    // arr for Kata completed by language
+    const [arrKataByLang, setArrKataByLang] = useState({});
 
-    const arrKataByLangForm = [];
-    for (const [key, value] of Object.entries(arrKataByLang)) {
-        console.log("key, value", key, value);
-        arrKataByLangForm.push({ language: key, nbKata: value.length });
-    }
-    console.log("arrKataByLangForm", arrKataByLangForm);
-
-    const CustomizedLabel = (props) => {
-        const { x, y, value, width, height } = props;
-
-        console.log("width", x + width);
-
-        const fireOffset = x + width < 240;
-        const offset = fireOffset ? -28 : 5;
-
-        const fireOffset2 = value.toString().length === 1;
-        const offset2 = fireOffset2 ? -10 : 0;
-
-        return (
-            <text x={x + width - offset + offset2} y={y + height - 5} fill={"white"} textAnchor="end">
-                {value}
-            </text>
-        );
-    };
-
-    const today = new Date();
-
-    // create array with date and number of completed Kata
-    for (var y = 0; y <= 365; y++) {
-        var dateKata = shiftDate(today, -y);
-
-        // format Date ( YYYY-MM-DD )
-        dateKata = String(dateKata.toLocaleDateString("fr-FR", { year: "numeric", month: "numeric", day: "numeric" }))
-            .split("/")
-            .reverse()
-            .join("-");
-        // console.log("dateKata", dateKata);
-
-        // add date and number kata completed by date
-        if (dateKata in listCompletKata.regroupDate) {
-            dataHeatMap.push({ date: dateKata, count: listCompletKata.regroupDate[dateKata].length });
-        } else {
-            dataHeatMap.push({ date: dateKata, count: 0 });
-        }
-    }
-    // console.log("dataHeatMap: ", dataHeatMap);
-
-    // Retreive name languages trained for the progress bar
-    const listRankLang = [];
-    for (var key in dataUser.ranks.languages) {
-        // console.log("key:", dataUser.ranks.languages[key]);
-        listRankLang.push({ language: key, name: dataUser.ranks.languages[key].name, score: dataUser.ranks.languages[key].score, color: dataUser.ranks.languages[key].color });
-    }
-    // console.log("listRankLang:", listRankLang);
+    const nameUser = JSON.parse(localStorage.getItem("User"));
+    const urlBadgeUserUser = "https://www.codewars.com/users/" + nameUser.user + "/badges/large";
 
     // list rank and there score for rank Up
     const rankUpScore = [
@@ -95,157 +39,218 @@ function UserStats() {
         { name: "2 dan", score: 97225, color: "grey", exaCol: "#555" },
     ];
 
-    const nameRankOverall = dataUser.ranks.overall.name;
-    // console.log("nameRankOverall: ", nameRankOverall);
+    useEffect(() => {
+        if (topCallApi === false) {
+            setTimeout(() => {
+                // call function for retrieve data User with API
+                retrieveData();
+            }, 1000);
+        }
+    }, []);
 
-    // image current rank
-    if (nameRankOverall === "2 dan") {
-        var colRankUp = "#555";
-    } else {
-        var colRankUp = rankUpScore[rankUpScore.findIndex((item) => item.name === nameRankOverall) + 1].color;
-    }
+    // call API for retrieve infos User
+    async function retrieveData() {
+        console.log("retrieveData");
+        var cptPageChal = 0;
+        var arrData = [];
 
-    const calcPourcRankUp = (name, score) => {
-        // name of rank
-        const indexRank = rankUpScore.findIndex((item) => item.name === name);
-        // console.log("indexRank: ", indexRank);
-        // console.log("rankUpScore: ", rankUpScore[indexRank].score);
+        // call api for infos User
+        try {
+            const res = await axios.get("https://www.codewars.com/api/v1/users/" + nameUser.user, {
+                headers: {
+                    "Content-Type": "application/json",
+                    Accept: "application/json",
+                },
+            });
+            // assign infos user colect with API
+            setUserClan(res.data.clan);
+            setUserPosition(res.data.leaderboardPosition);
+            setUserHonor(res.data.honor);
+            setUserCompletKata(res.data.codeChallenges.totalCompleted);
+            setRankOverall(res.data.ranks.overall);
+            setListRankLang(res.data.ranks.languages);
 
-        if (name === "2 dan") {
-            pourRkUp = 100;
-        } else {
-            // calcul pourcentage rank Up
-            var pourRkUp = ((score - rankUpScore[indexRank].score) * 100) / (rankUpScore[indexRank + 1].score - rankUpScore[indexRank].score);
-            // console.log("pourRkUp: ", pourRkUp);
-
-            // round decimal superior  5.579 => 5.58
-            pourRkUp = Math.round(pourRkUp * 100) / 100;
-            // console.log("pourRkUp: ", pourRkUp);
+            // define number of page in terms of number of completed challenge
+            if (res.data.codeChallenges.totalCompleted < 201) {
+                cptPageChal = 0;
+            } else {
+                cptPageChal = Math.floor(res.data.codeChallenges.totalCompleted / 200);
+            }
+        } catch (err) {
+            console.log(err);
         }
 
-        return pourRkUp;
+        // call api for Challenges completed by user
+        for (let x = 0; x < cptPageChal + 1; x++) {
+            try {
+                const res = await axios.get("https://www.codewars.com/api/v1/users/" + nameUser.user + "/code-challenges/completed?page=" + x, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Accept: "application/json",
+                    },
+                });
+
+                // insert values in array for push in LocalStorage
+                arrData = arrData.concat(res.data.data);
+            } catch (err) {
+                console.log(err);
+            }
+        }
+
+        // Regroup Kata by Languages
+        const arrKataByLang = arrData.reduce((group, elem) => {
+            const completedLang = elem.completedLanguages;
+
+            for (var x of completedLang) {
+                group[x] = group[x] ?? [];
+                group[x].push(elem.id);
+            }
+
+            return group;
+        }, {});
+
+        // Regroup challanges completed by date (day)
+        const arrGroupByDate = arrData.reduce((group, elem) => {
+            const completedAt = elem.completedAt.split("T")[0];
+
+            group[completedAt] = group[completedAt] ?? [];
+            group[completedAt].push(elem);
+            return group;
+        }, {});
+
+        setArrKataByLang(arrKataByLang);
+        setRegroupDate(arrGroupByDate);
+
+        // display data and graph
+        setTopCallApi(true);
+    }
+
+    const arrKataByLangForm = [];
+    for (const [key, value] of Object.entries(arrKataByLang)) {
+        arrKataByLangForm.push({ language: key, nbKata: value.length });
+    }
+    console.log("arrKataByLangForm", arrKataByLangForm);
+
+    const CustomizedLabel = (props) => {
+        const { x, y, value, width, height } = props;
+
+        const fireOffset = x + width < 240;
+        const offset = fireOffset ? -28 : 5;
+
+        const fireOffset2 = value.toString().length === 1;
+        const offset2 = fireOffset2 ? -10 : 0;
+
+        return (
+            <text x={x + width - offset + offset2} y={y + height - 3} fill={"white"} textAnchor="end">
+                {value}
+            </text>
+        );
     };
 
-    // Data for pie charts Rank Overall
-    const dataPieChartOverall = [
-        { name: "Rank", value: calcPourcRankUp(nameRankOverall, dataUser.ranks.overall.score), fill: rankUpScore[rankUpScore.findIndex((rank) => rank.name === nameRankOverall)].exaCol },
-        { name: "empty", value: 100 - calcPourcRankUp(nameRankOverall, dataUser.ranks.overall.score), fill: "#38393b" },
-    ];
+    // Retreive name languages trained for the progress bar
+    console.log("listRankLang", listRankLang);
+    var arrRankLang = [];
+    for (var key in listRankLang) {
+        arrRankLang.push({ language: key, name: listRankLang[key].name, score: listRankLang[key].score, color: listRankLang[key].color });
+    }
 
-    // create list progress bar rank up for all language
-    const listBarRankLang = listRankLang.map((item) => {
-        console.log(item);
-        var valPourcRankUp = calcPourcRankUp(item.name, item.score);
-        var nameRankUp = rankUpScore[rankUpScore.findIndex((rank) => rank.name === item.name) + 1].name;
-        var colCurRank = rankUpScore[rankUpScore.findIndex((rank) => rank.name === item.name)].color;
-        var colNextRank = rankUpScore[rankUpScore.findIndex((rank) => rank.name === item.name) + 1].color;
-        var colProgressBar = rankUpScore[rankUpScore.findIndex((rank) => rank.name === item.name)].exaCol;
+    if (topCallApi) {
+        // image current rank
+        console.log("rankOverall.name", rankOverall.name);
+        if (rankOverall === "2 dan") {
+            var colRankUp = "#555";
+        } else {
+            var colRankUp = rankUpScore[rankUpScore.findIndex((item) => item.name === rankOverall.name) + 1].color;
+        }
 
-        console.log("col:", colCurRank, colNextRank);
-        return (
-            <div key={item.language} className="box-progress-bar">
-                <ProgressBar bgcolor={colProgressBar} completed={valPourcRankUp} language={item.language} nameRank={item.name} colCurRank={colCurRank} colNextRank={colNextRank} nameRankUp={nameRankUp} />
-            </div>
-        );
-    });
+        const calcPourcRankUp = (name, score) => {
+            // name of rank
+            const indexRank = rankUpScore.findIndex((item) => item.name === name);
+
+            if (name === "2 dan") {
+                pourRkUp = 100;
+            } else {
+                // calcul pourcentage rank Up
+                var pourRkUp = ((score - rankUpScore[indexRank].score) * 100) / (rankUpScore[indexRank + 1].score - rankUpScore[indexRank].score);
+
+                // round decimal superior  5.579 => 5.58
+                pourRkUp = Math.round(pourRkUp * 100) / 100;
+            }
+
+            return pourRkUp;
+        };
+
+        // Data for pie charts Rank Overall
+        var dataPieChartOverall = [
+            { name: "Rank", value: calcPourcRankUp(rankOverall.name, rankOverall.score), fill: rankUpScore[rankUpScore.findIndex((rank) => rank.name === rankOverall.name)].exaCol },
+            { name: "empty", value: 100 - calcPourcRankUp(rankOverall.name, rankOverall.score), fill: "#38393b" },
+        ];
+
+        // create list progress bar rank up for all language
+        var listBarRankLang = arrRankLang.map((item) => {
+            console.log("item", item);
+            var valPourcRankUp = calcPourcRankUp(item.name, item.score);
+            var nameRankUp = rankUpScore[rankUpScore.findIndex((rank) => rank.name === item.name) + 1].name;
+            var colCurRank = rankUpScore[rankUpScore.findIndex((rank) => rank.name === item.name)].color;
+            var colNextRank = rankUpScore[rankUpScore.findIndex((rank) => rank.name === item.name) + 1].color;
+            var colProgressBar = rankUpScore[rankUpScore.findIndex((rank) => rank.name === item.name)].exaCol;
+
+            return (
+                <div key={item.language} className="box-progress-bar">
+                    <ProgressBar bgcolor={colProgressBar} completed={valPourcRankUp} language={item.language} nameRank={item.name} colCurRank={colCurRank} colNextRank={colNextRank} nameRankUp={nameRankUp} />
+                </div>
+            );
+        });
+    }
 
     return (
         <div className="main-stats">
-            <div className="div-user">
-                <div className="infos-user">
-                    <div className="name-rank">
-                        <h2>{dataUser.user}</h2>
-                        <figure>
-                            <img src={urlBadgeUserUser}></img>
-                        </figure>
+            {!topCallApi ? (
+                <>
+                    <CircularProgress />
+                </>
+            ) : (
+                <>
+                    <div className="div-user">
+                        <InfosUser userName={nameUser.user} userClan={userClan} userHonor={userHonor} userCompletKata={userCompletKata} userPosition={userPosition} urlBadgeUserUser={urlBadgeUserUser} />
                     </div>
-                    <span>
-                        <p className="label-p">Clan : </p>
-                        <p className="value-p">{dataUser.clan}</p>
-                    </span>
 
-                    <span>
-                        <p className="label-p">Honor : </p>
-                        <p className="value-p">{dataUser.honor.toLocaleString()}</p>
-                    </span>
+                    <div className="div-charts">
+                        <div className="div-pie-chart-overall-rank">
+                            <h3>Rank Breakdown</h3>
 
-                    <span>
-                        <p className="label-p">Completed Katas : </p>
-                        <p className="value-p">{dataUser.challenges.totalCompleted.toLocaleString()}</p>
-                    </span>
-                    <span>
-                        <p className="label-p">LeadBoard Position : </p>
-                        <p className="value-p">{dataUser.position.toLocaleString()}</p>
-                    </span>
-                </div>
-            </div>
-
-            <div className="div-charts">
-                <div className="div-pie-chart-overall-rank">
-                    <h3>Rank Breakdown</h3>
-
-                    <div className="div-box-rank">
-                        <p>Next Rank </p>
-                        <div className={"small-hex is-extra-wide " + colRankUp}>
-                            <div className="inner-small-hex is-extra-wide">
-                                <span>{nameRankOverall}</span>
+                            <div className="div-box-rank">
+                                <p>Next Rank </p>
+                                <div className={"small-hex is-extra-wide " + colRankUp}>
+                                    <div className="inner-small-hex is-extra-wide">{<span>{rankUpScore[rankUpScore.findIndex((rank) => rank.name === rankOverall.name) + 1].name}</span>}</div>
+                                </div>
                             </div>
+
+                            <PieChart width={350} height={350}>
+                                <Pie data={dataPieChartOverall} dataKey="value" cx={175} cy={120} innerRadius={70} outerRadius={90} stroke="none" startAngle={90} endAngle={-270} />
+                            </PieChart>
+                        </div>
+
+                        <div className="div-progress-bar">
+                            <h3>Languages Trained </h3>
+                            {listBarRankLang}
+                        </div>
+
+                        <div className="div-kata-by-lang">
+                            <h3>Number Kata by language</h3>
+                            <BarChart data={arrKataByLangForm} layout="vertical" width={270} height={arrKataByLangForm.length * 37}>
+                                <XAxis type="number" hide />
+                                <YAxis type="category" width={80} dataKey="language" style={{ fill: "white" }} />
+                                <Bar dataKey="nbKata" fill="#5a5b5e" label={CustomizedLabel} barSize={17} />
+                            </BarChart>
                         </div>
                     </div>
 
-                    <PieChart width={350} height={350}>
-                        <Pie data={dataPieChartOverall} dataKey="value" cx={175} cy={120} innerRadius={70} outerRadius={90} stroke="none" startAngle={90} endAngle={-270} />
-                    </PieChart>
-                </div>
-
-                <div className="div-progress-bar">
-                    <h3>Languages Trained </h3>
-                    {listBarRankLang}
-                </div>
-
-                <div className="div-kata-by-lang">
-                    <h3>Number Kata by language</h3>
-                    <BarChart data={arrKataByLangForm} layout="vertical" width={270} height={arrKataByLangForm.length * 40}>
-                        <XAxis type="number" hide />
-                        <YAxis type="category" width={80} dataKey="language" style={{ fill: "white" }} />
-                        <Bar dataKey="nbKata" fill="#5a5b5e" label={CustomizedLabel} barSize={20} />
-                    </BarChart>
-                </div>
-            </div>
-
-            <div className="div-heat-map">
-                <div className="box-heat-map">
-                    <h3>Activity on CodeWars</h3>
-                    <CalendarHeatmap
-                        startDate={shiftDate(today, -365)}
-                        endDate={today}
-                        values={dataHeatMap}
-                        classForValue={(value) => {
-                            if (value.count >= 10) {
-                                return "color-max";
-                            }
-                            return `color-${value.count}`;
-                        }}
-                        tooltipDataAttrs={(value) => {
-                            return {
-                                "data-tip": value.date + " Completed Kata: " + value.count,
-                            };
-                        }}
-                        showWeekdayLabels={true}
-                        gutterSize={2}
-                    />
-                    <ReactTooltip />
-                </div>
-                {/* <div className="box-btn-kata">
-                    <h3>More details</h3>
-                    <Button variant="outlined" size="large">
-                        Completed Kata
-                    </Button>
-                    <Button variant="outlined" size="large">
-                        Authored Kata
-                    </Button>
-                </div> */}
-            </div>
+                    <div className="div-heat-map">
+                        <HeatMap regroupDate={regroupDate} />
+                    </div>
+                </>
+            )}
         </div>
     );
 }
