@@ -10,6 +10,7 @@ import "./App.css";
 function Home(props) {
     const navigate = useNavigate();
     const [username, setUsername] = useState("");
+    const [errApi, setErrApi] = useState(false);
 
     // input userName
     const userNameChange = (e) => {
@@ -17,23 +18,39 @@ function Home(props) {
     };
 
     // Submit Form Username
-    const submitFormUsername = async () => {
+    const submitFormUsername = async (event) => {
         // remove all
-        localStorage.clear();
-        localStorage.setItem(
-            "User",
-            JSON.stringify({
-                user: username,
-            })
-        );
+        // localStorage.clear();
+        event.preventDefault();
+        console.log("submitFormUsername");
 
-        // 👇️ redirect to /stats
-        navigate({
-            pathname: "/stats",
-            search: `?${createSearchParams({
-                user: username,
-            })}`,
-        });
+        try {
+            const res = await axios.get("https://www.codewars.com/api/v1/users/" + username, {
+                headers: {
+                    "Content-Type": "application/json",
+                    Accept: "application/json",
+                },
+            });
+        } catch (err) {
+            setErrApi(true);
+        }
+
+        if (errApi) {
+            localStorage.setItem(
+                "User",
+                JSON.stringify({
+                    user: username,
+                })
+            );
+
+            // 👇️ redirect to /stats
+            navigate({
+                pathname: "/stats",
+                search: `?${createSearchParams({
+                    user: username,
+                })}`,
+            });
+        }
     };
 
     return (
@@ -43,12 +60,21 @@ function Home(props) {
                 <h1>Codewars User Stats</h1>
             </div>
             <div className="text-field-username">
-                <form noValidate autoComplete="off" onSubmit={submitFormUsername}>
-                    <TextField required id="outlined-required" label="Enter Username" defaultValue="Kytox" onChange={userNameChange} />
-                    <IconButton type="submit" sx={{ p: "5px" }} aria-label="search">
-                        <SearchIcon />
-                    </IconButton>
-                </form>
+                {errApi ? (
+                    <form noValidate autoComplete="off" onSubmit={submitFormUsername}>
+                        <TextField required error id="outlined-error-helper-text" label="Error" defaultValue="Kytox" helperText="Username does not exist in Codewars" onChange={userNameChange} />
+                        <IconButton type="submit" sx={{ p: "5px" }} aria-label="search">
+                            <SearchIcon />
+                        </IconButton>
+                    </form>
+                ) : (
+                    <form noValidate autoComplete="off" onSubmit={submitFormUsername}>
+                        <TextField required id="outlined-required" label="Enter Username" onChange={userNameChange} />
+                        <IconButton type="submit" sx={{ p: "5px" }} aria-label="search">
+                            <SearchIcon />
+                        </IconButton>
+                    </form>
+                )}
             </div>
         </div>
     );
