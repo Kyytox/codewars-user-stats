@@ -4,6 +4,7 @@ import TextField from "@mui/material/TextField";
 import SearchIcon from "@mui/icons-material/Search";
 import IconButton from "@mui/material/IconButton";
 import axios from "axios";
+import Footer from "./footer";
 
 import "./App.css";
 
@@ -20,12 +21,11 @@ function Home(props) {
     // Submit Form Username
     const submitFormUsername = async (event) => {
         // remove all
-        // localStorage.clear();
+        localStorage.clear();
         event.preventDefault();
-        console.log("submitFormUsername");
 
         try {
-            const res = await axios.get("https://www.codewars.com/api/v1/users/" + username, {
+            await axios.get("https://www.codewars.com/api/v1/users/" + username, {
                 headers: {
                     "Content-Type": "application/json",
                     Accept: "application/json",
@@ -76,6 +76,7 @@ function Home(props) {
                     </form>
                 )}
             </div>
+            <Footer />
         </div>
     );
 }
