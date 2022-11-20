@@ -5,7 +5,11 @@ import axios from "axios";
 import CircularProgress from "@mui/material/CircularProgress";
 import HeatMap from "./heatMap";
 import InfosUser from "./infosUser";
+import AOS from "aos";
+import "aos/dist/aos.css";
 import "./App.css";
+
+AOS.init();
 
 function UserStats() {
     const [topCallApi, setTopCallApi] = useState(false);
@@ -125,11 +129,13 @@ function UserStats() {
         setTopCallApi(true);
     }
 
-    const arrKataByLangForm = [];
+    var arrKataByLangForm = [];
     for (const [key, value] of Object.entries(arrKataByLang)) {
         arrKataByLangForm.push({ language: key, nbKata: value.length });
     }
-    console.log("arrKataByLangForm", arrKataByLangForm);
+    arrKataByLangForm = arrKataByLangForm.sort(function (a, b) {
+        return a.nbKata - b.nbKata;
+    });
 
     const CustomizedLabel = (props) => {
         const { x, y, value, width, height } = props;
@@ -153,10 +159,13 @@ function UserStats() {
     for (var key in listRankLang) {
         arrRankLang.push({ language: key, name: listRankLang[key].name, score: listRankLang[key].score, color: listRankLang[key].color });
     }
+    arrRankLang = arrRankLang.sort(function (a, b) {
+        return a.score - b.score;
+    });
 
     if (topCallApi) {
         // image current rank
-        console.log("rankOverall.name", rankOverall.name);
+
         if (rankOverall === "2 dan") {
             var colRankUp = "#555";
         } else {
@@ -187,7 +196,7 @@ function UserStats() {
         ];
 
         // create list progress bar rank up for all language
-        var listBarRankLang = arrRankLang.map((item) => {
+        var listBarRankLang = arrRankLang.reverse().map((item) => {
             console.log("item", item);
             var valPourcRankUp = calcPourcRankUp(item.name, item.score);
             var nameRankUp = rankUpScore[rankUpScore.findIndex((rank) => rank.name === item.name) + 1].name;
@@ -196,7 +205,7 @@ function UserStats() {
             var colProgressBar = rankUpScore[rankUpScore.findIndex((rank) => rank.name === item.name)].exaCol;
 
             return (
-                <div key={item.language} className="box-progress-bar">
+                <div key={item.language} className="box-progress-bar" data-aos="zoom-in" data-aos-delay="500" data-aos-duration="1500">
                     <ProgressBar bgcolor={colProgressBar} completed={valPourcRankUp} language={item.language} nameRank={item.name} colCurRank={colCurRank} colNextRank={colNextRank} nameRankUp={nameRankUp} />
                 </div>
             );
@@ -215,39 +224,40 @@ function UserStats() {
                         <InfosUser userName={nameUser.user} userClan={userClan} userHonor={userHonor} userCompletKata={userCompletKata} userPosition={userPosition} urlBadgeUserUser={urlBadgeUserUser} />
                     </div>
 
-                    <div className="div-charts">
-                        <div className="div-pie-chart-overall-rank">
-                            <h3>Rank Breakdown</h3>
+                    <div className="div-stats-user">
+                        <div className="div-charts">
+                            <div className="div-pie-chart-overall-rank" data-aos="zoom-in" data-aos-delay="500" data-aos-duration="1500">
+                                <h3>Rank Breakdown</h3>
 
-                            <div className="div-box-rank">
-                                <p>Next Rank </p>
-                                <div className={"small-hex is-extra-wide " + colRankUp}>
-                                    <div className="inner-small-hex is-extra-wide">{<span>{rankUpScore[rankUpScore.findIndex((rank) => rank.name === rankOverall.name) + 1].name}</span>}</div>
+                                <div className="div-box-rank">
+                                    <p>Next Rank </p>
+                                    <div className={"small-hex is-extra-wide " + colRankUp}>
+                                        <div className="inner-small-hex is-extra-wide">{<span>{rankUpScore[rankUpScore.findIndex((rank) => rank.name === rankOverall.name) + 1].name}</span>}</div>
+                                    </div>
                                 </div>
+
+                                <PieChart width={350} height={290}>
+                                    <Pie data={dataPieChartOverall} dataKey="value" cx={175} cy={120} innerRadius={70} outerRadius={90} stroke="none" startAngle={90} endAngle={-270} />
+                                </PieChart>
+                            </div>
+                            <HeatMap regroupDate={regroupDate} />
+                        </div>
+
+                        <div className="div-heat-map">
+                            <div className="div-progress-bar" data-aos="fade-up" data-aos-delay="500" data-aos-duration="1500">
+                                <h3>Languages Trained </h3>
+                                {listBarRankLang}
                             </div>
 
-                            <PieChart width={350} height={350}>
-                                <Pie data={dataPieChartOverall} dataKey="value" cx={175} cy={120} innerRadius={70} outerRadius={90} stroke="none" startAngle={90} endAngle={-270} />
-                            </PieChart>
+                            <div className="div-kata-by-lang" data-aos="fade-up" data-aos-delay="500" data-aos-duration="1500">
+                                <h3>Number Kata by language</h3>
+                                <BarChart data={arrKataByLangForm.reverse()} layout="vertical" width={320} height={arrKataByLangForm.length * 37}>
+                                    <XAxis type="number" hide />
+                                    <YAxis type="category" width={80} dataKey="language" style={{ fill: "white" }} />
+                                    <Bar dataKey="nbKata" fill="rgb(0 0 0 / 43%)" label={CustomizedLabel} barSize={16} animationBegin={1000} animationDuration={2000} animationEasing="linear" radius={[0, 10, 10, 0]} />
+                                </BarChart>
+                            </div>
                         </div>
-
-                        <div className="div-progress-bar">
-                            <h3>Languages Trained </h3>
-                            {listBarRankLang}
-                        </div>
-
-                        <div className="div-kata-by-lang">
-                            <h3>Number Kata by language</h3>
-                            <BarChart data={arrKataByLangForm} layout="vertical" width={270} height={arrKataByLangForm.length * 37}>
-                                <XAxis type="number" hide />
-                                <YAxis type="category" width={80} dataKey="language" style={{ fill: "white" }} />
-                                <Bar dataKey="nbKata" fill="#5a5b5e" label={CustomizedLabel} barSize={17} />
-                            </BarChart>
-                        </div>
-                    </div>
-
-                    <div className="div-heat-map">
-                        <HeatMap regroupDate={regroupDate} />
                     </div>
                 </>
             )}

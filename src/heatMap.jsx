@@ -33,7 +33,7 @@ function HeatMap(props) {
     }
 
     return (
-        <div className="box-heat-map">
+        <div className="box-heat-map" data-aos="zoom-in" data-aos-delay="500" data-aos-duration="1500">
             <h3>Activity on CodeWars</h3>
             <CalendarHeatmap
                 startDate={shiftDate(today, -365)}
