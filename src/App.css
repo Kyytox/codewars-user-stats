@@ -131,6 +131,7 @@
   margin: 0 3%;
   padding-bottom: 40px;
   margin-bottom: 100px;
+  min-height: 500px;
   border-radius: 5px;
   -webkit-border-radius: 5px;
   -moz-border-radius: 5px;
@@ -584,4 +585,103 @@
 
 .footer p {
   margin-top: 10px;
+}
+
+
+
+
+
+
+
+@media (max-width: 430px) {
+
+  body {
+    overflow-x: hidden;
+    max-width: 100%;
+  }
+
+  #root {
+    margin: 0;
+    padding: 0;
+    padding-top: 3%;
+    text-align: center;
+  }
+
+  .header {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 2%;
+    padding: 10px;
+  }
+
+  .text-field-username form {
+    width: 100%;
+  }
+
+  .text-field-username>form>div {
+    width: 65%;
+    margin-right: 5px;
+  }
+
+  .main-stats {
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: center;
+  }
+
+  .infos-user {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-content: center;
+    justify-content: center;
+    align-items: flex-start;
+  }
+
+  .div-user {
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 100%;
+  }
+
+  .name-rank {
+    width: 100%;
+  }
+
+  .infos-user span:nth-child(2),
+  .infos-user span:nth-child(3),
+  .infos-user span:nth-child(4),
+  .infos-user span:nth-child(5) {
+    width: 45% !important;
+  }
+
+  .div-charts {
+    flex-direction: column;
+    align-items: center;
+  }
+
+
+  .div-heat-map {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .box-heat-map {
+    width: 100%;
+  }
+
+  .div-progress-bar {
+    width: 100%;
+    margin-bottom: 50px;
+  }
+
+  .box-progress-bar {
+    width: 70%;
+    margin-bottom: 20px;
+  }
+
+  .div-kata-by-lang {
+    width: 100%;
+  }
 }

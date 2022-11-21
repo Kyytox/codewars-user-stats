@@ -20,9 +20,10 @@ function Home(props) {
 
     // Submit Form Username
     const submitFormUsername = async (event) => {
-        // remove all
-        localStorage.clear();
         event.preventDefault();
+        // remove all
+        var topCall = 0;
+        localStorage.clear();
 
         try {
             await axios.get("https://www.codewars.com/api/v1/users/" + username, {
@@ -31,11 +32,15 @@ function Home(props) {
                     Accept: "application/json",
                 },
             });
+            topCall = 1;
         } catch (err) {
             setErrApi(true);
+            console.log("err");
         }
 
-        if (errApi) {
+        console.log("errApi", errApi);
+
+        if (topCall === 1) {
             localStorage.setItem(
                 "User",
                 JSON.stringify({
@@ -62,7 +67,7 @@ function Home(props) {
             <div className="text-field-username">
                 {errApi ? (
                     <form noValidate autoComplete="off" onSubmit={submitFormUsername}>
-                        <TextField required error id="outlined-error-helper-text" label="Error" defaultValue="Kytox" helperText="Username does not exist in Codewars" onChange={userNameChange} />
+                        <TextField required error id="outlined-error-helper-text" label="Error" helperText="Username does not exist in Codewars" onChange={userNameChange} />
                         <IconButton type="submit" sx={{ p: "5px" }} aria-label="search">
                             <SearchIcon />
                         </IconButton>
