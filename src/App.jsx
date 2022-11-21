@@ -9,7 +9,7 @@ function App() {
         <div className="App">
             <BrowserRouter>
                 <Routes>
-                    <Route exact path="/" element={<Home />} />
+                    <Route exact path="/codewars-user-stats" element={<Home />} />
                     <Route path="/stats" element={<UserStats />} />
                 </Routes>
             </BrowserRouter>
