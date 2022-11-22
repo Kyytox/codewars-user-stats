@@ -54,7 +54,6 @@ function UserStats() {
 
     // call API for retrieve infos User
     async function retrieveData() {
-        console.log("retrieveData");
         var cptPageChal = 0;
         var arrData = [];
 
@@ -154,7 +153,6 @@ function UserStats() {
     };
 
     // Retreive name languages trained for the progress bar
-    console.log("listRankLang", listRankLang);
     var arrRankLang = [];
     for (var key in listRankLang) {
         arrRankLang.push({ language: key, name: listRankLang[key].name, score: listRankLang[key].score, color: listRankLang[key].color });

@@ -38,8 +38,6 @@ function Home(props) {
             console.log("err");
         }
 
-        console.log("errApi", errApi);
-
         if (topCall === 1) {
             localStorage.setItem(
                 "User",
