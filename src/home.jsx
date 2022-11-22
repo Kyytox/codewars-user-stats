@@ -63,6 +63,7 @@ function Home(props) {
             <div className="header">
                 <img src="https://www.codewars.com/packs/assets/logo.61192cf7.svg"></img>
                 <h1>Codewars User Stats</h1>
+                <h2>Tool to have a little more details on your Codewars stats</h2>
             </div>
             <div className="text-field-username">
                 {errApi ? (

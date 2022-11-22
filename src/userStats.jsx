@@ -244,12 +244,12 @@ function UserStats() {
 
                     <div className="div-heat-map">
                         <div className="div-progress-bar" data-aos="fade-up" data-aos-delay="500" data-aos-duration="1500">
-                            <h3>Languages Trained </h3>
+                            <h3>Languages Trained</h3>
                             {listBarRankLang}
                         </div>
 
                         <div className="div-kata-by-lang" data-aos="fade-up" data-aos-delay="500" data-aos-duration="1500">
-                            <h3>Number Kata by language</h3>
+                            <h3>Completed Kata by language</h3>
                             <BarChart data={arrKataByLangForm.reverse()} layout="vertical" width={320} height={arrKataByLangForm.length * 37}>
                                 <XAxis type="number" hide />
                                 <YAxis type="category" width={80} dataKey="language" style={{ fill: "white" }} />
